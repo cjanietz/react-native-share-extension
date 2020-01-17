@@ -30,6 +30,11 @@ RCT_EXPORT_MODULE();
  self.view = rootView;
 }
 
+RCT_EXPORT_METHOD(openURL:(NSString *)url) {
+  UIApplication *application = [UIApplication sharedApplication];
+  NSURL *urlToOpen = [NSURL URLWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+  [application openURL:urlToOpen options:@{} completionHandler: nil];
+}
 
 RCT_EXPORT_METHOD(close:(NSString *)appGroupId) {
   [self cleanUpTempFiles:appGroupId];
