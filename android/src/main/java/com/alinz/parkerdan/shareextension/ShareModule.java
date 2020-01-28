@@ -8,10 +8,12 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import java.io.InputStream;
 
 
@@ -29,7 +31,28 @@ public class ShareModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void close() {
-    getCurrentActivity().finish();
+    Activity currentActivity = getCurrentActivity();
+
+    if (currentActivity != null) {
+      currentActivity.finish();
+    } else {
+        Log.e("Error: ", "Activity not found");
+    }
+  }
+ 
+    
+  @ReactMethod
+  public void openURL(String url) {
+      Uri uri = Uri.parse(url);
+      Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+
+      Activity currentActivity = getCurrentActivity();
+
+      if (currentActivity != null) {
+        currentActivity.startActivity(intent);
+      } else {
+        Log.e("Error: ", "Activity not found");
+      }
   }
 
   @ReactMethod
