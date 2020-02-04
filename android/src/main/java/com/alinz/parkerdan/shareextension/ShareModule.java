@@ -81,7 +81,6 @@ public class ShareModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void clearFilePath() {
-    // TODO: do we really need it?
     Activity mActivity = getCurrentActivity();
     
     if(mActivity == null) { return; }
@@ -106,7 +105,7 @@ public class ShareModule extends ReactContextBaseJavaModule {
       }
       catch (ActivityNotFoundException e)
       {
-          System.out.println("###ERROR!!!!" + e.getMessage());
+          System.out.println("Error:" + e.getMessage());
       }
   }
 
