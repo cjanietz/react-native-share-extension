@@ -100,7 +100,7 @@ public class ShareModule extends ReactContextBaseJavaModule {
   public void openURL(String url) {
       Uri uri = Uri.parse(url);
       Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-      intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       try
       {
           getReactApplicationContext().startActivity(intent);
