@@ -95,6 +95,32 @@ public class ShareModule extends ReactContextBaseJavaModule {
     }
   }
 
+  @ReactMethod
+  public void openURL(String url) {
+      Uri uri = Uri.parse(url);
+      Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+      intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+      try
+      {
+          getReactApplicationContext().startActivity(intent);
+      }
+      catch (ActivityNotFoundException e)
+      {
+          System.out.println("###ERROR!!!!" + e.getMessage());
+      }
+  }
+
+  @ReactMethod
+  public void close() {
+    this.clearFilePath();
+
+    Activity mActivity = getCurrentActivity();
+
+    if(mActivity == null) { return; }
+
+    mActivity.finish();
+  }
+
   @Override
   public String getName() {
     return "ReactNativeShareExtension";
