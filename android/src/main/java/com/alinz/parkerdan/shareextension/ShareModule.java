@@ -100,19 +100,19 @@ public class ShareModule extends ReactContextBaseJavaModule {
   public void openURL(String url) {
       Uri uri = Uri.parse(url);
       Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
       try
       {
           getReactApplicationContext().startActivity(intent);
       }
       catch (ActivityNotFoundException e)
       {
-          System.out.println("Error:" + e.getMessage());
+          System.out.println("###Error:" + e.getMessage());
       }
   }
 
   @ReactMethod
-  public void close() {
+  public void closeSharingActivity() {
     this.clearFilePath();
 
     Activity mActivity = getCurrentActivity();
