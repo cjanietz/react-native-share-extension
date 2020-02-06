@@ -1,6 +1,7 @@
 package com.alinz.parkerdan.shareextension;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactMethod;
@@ -37,46 +38,53 @@ public class ShareModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void getFilepath(Callback successCallback) {
-    Activity mActivity = getCurrentActivity();
-    
-    if(mActivity == null) { return; }
-    
-    Intent intent = mActivity.getIntent();
-    String action = intent.getAction();
-    String type = intent.getType();
+  public void getFilepath(final Promise promise) {
+    try {
+      Activity mActivity = getCurrentActivity();
 
-    if (Intent.ACTION_SEND.equals(action) && type != null) {
-      if ("text/plain".equals(type)) {
-        String input = intent.getStringExtra(Intent.EXTRA_TEXT);
-        WritableArray promiseArray = Arguments.createArray();
-        promiseArray.pushString(input);
-        successCallback.invoke(promiseArray);
-      } else if (type.startsWith("image/") || type.startsWith("application/")) {
-        Uri fileUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        if (fileUri != null) {
-          String resUri = "file://" + RealPathUtil.getRealPathFromURI(mActivity, fileUri);
-          WritableArray promiseArray = Arguments.createArray();
-          promiseArray.pushString(resUri);
-          successCallback.invoke(promiseArray);
-        }
-      }else {
-        Toast.makeText(reactContext, "Type is not support", Toast.LENGTH_SHORT).show();
+      if (mActivity == null) {
+        promise.resolve(null);
       }
-    } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
-        if (type.startsWith("image/") || type.startsWith("application/")) {
-          ArrayList<Uri> fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-          if (fileUris != null) {
+
+      Intent intent = mActivity.getIntent();
+      String action = intent.getAction();
+      String type = intent.getType();
+
+      if (Intent.ACTION_SEND.equals(action) && type != null) {
+        if ("text/plain".equals(type)) {
+          String input = intent.getStringExtra(Intent.EXTRA_TEXT);
+          WritableArray promiseArray = Arguments.createArray();
+          promiseArray.pushString(input);
+          promise.resolve(promiseArray);
+        } else if (type.startsWith("image/") || type.startsWith("application/")) {
+          Uri fileUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+          if (fileUri != null) {
+            String resUri = "file://" + RealPathUtil.getRealPathFromURI(mActivity, fileUri);
             WritableArray promiseArray = Arguments.createArray();
-            for (Uri uri: fileUris) {
-              String resUri = "file://" + RealPathUtil.getRealPathFromURI(mActivity, uri);
-              promiseArray.pushString(resUri);
-            }
-            successCallback.invoke(promiseArray);
+            promiseArray.pushString(resUri);
+            promise.resolve(promiseArray);
           }
         } else {
           Toast.makeText(reactContext, "Type is not support", Toast.LENGTH_SHORT).show();
         }
+      } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+        if (type.startsWith("image/") || type.startsWith("application/")) {
+          ArrayList<Uri> fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+          if (fileUris != null) {
+            WritableArray promiseArray = Arguments.createArray();
+            for (Uri uri : fileUris) {
+              String resUri = "file://" + RealPathUtil.getRealPathFromURI(mActivity, uri);
+              promiseArray.pushString(resUri);
+            }
+            promise.resolve(promiseArray);
+          }
+        } else {
+          Toast.makeText(reactContext, "Type is not support", Toast.LENGTH_SHORT).show();
+        }
+      }
+    }
+    catch(Exception e){
+        promise.reject(e);
     }
   }
 
