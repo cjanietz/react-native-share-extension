@@ -40,6 +40,8 @@ RCT_EXPORT_METHOD(close:(NSString *)appGroupId) {
   [self cleanUpTempFiles:appGroupId];
   [extensionContext completeRequestReturningItems:nil
                                 completionHandler:nil];
+  // simulate crash to clean memory
+  @throw NSInternalInconsistencyException;
 }
 
 RCT_REMAP_METHOD(data,
